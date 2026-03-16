@@ -100,8 +100,30 @@ services:
       - kafka
       - mongo
       - kafkasimulator
-  
 
+  
+  service_b:
+    container_name: service_b
+    build:
+      context: .
+      dockerfile: /service_b/Dockerfile
+   
+    depends_on:
+      - kafka
+      - mongo
+      - kafkasimulator
+      - service_a
+  service_c:
+    container_name: service_c
+    build:
+      context: .
+      dockerfile: /service_c/Dockerfile
+   
+    depends_on:
+      - kafka
+      - mongo
+      - kafkasimulator
+      - service_b    
 
 volumes:
   kafka_kraft:
