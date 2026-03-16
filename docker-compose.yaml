@@ -18,10 +18,15 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092 #kafka!
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092 #kafka!
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
 
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+    healthcheck:
+        test: ["CMD", "java", "-jar", "/Ping.jar", "localhost", "9092"]
+        interval: 30s
+        timeout: 10s
+        retries: 4
 
 
     volumes:
@@ -39,7 +44,7 @@ services:
       - 9200:9200
 
     volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/datafile
+      - elasticsearch-data:/usr/share/elasticsearch
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
@@ -73,17 +78,29 @@ services:
       retries: 5
       start_period: 5s
         
-        
+
+
+  kafkasimulator:
+    container_name: kafkasimulator
+    build:
+      context: .
+      dockerfile: KafkaSimulator/Dockerfile 
+    depends_on:
+      - kafka
+
   service_a:
     container_name: service_a
     build:
       context: .
       dockerfile: /service_a/Dockerfile
     environment:
-      - name=value
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - MONGO_URL=mongodb://mongo:27017/
     depends_on:
       - kafka
       - mongo
+      - kafkasimulator
+  
 
 
 volumes:
