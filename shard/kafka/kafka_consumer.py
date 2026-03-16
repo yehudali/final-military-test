@@ -31,8 +31,8 @@ class KafkaConsumer:
                     log_event("ERROR", f"error in msg {msg.error()}")
                     continue
 
-                key = msg.key().decode('utf-8') if msg.key() else None
-                value = msg.value().decode('utf-8') if msg.value() else None
+                key = msg.key().decode('utf-8') if msg.key() else None # type: ignore
+                value = msg.value().decode('utf-8') if msg.value() else None # type: ignore
                 
 
                 return key,value
