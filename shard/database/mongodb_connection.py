@@ -27,4 +27,14 @@ class MongoManager():
         except Exception as e:
               log_event("ERROR", F"error when insert doc {document} to mongodb:{e}")
             
-          
+    def get_document_by_query(self,query:dict, filter:dict={}):
+        try:
+              doc = self.coll.find_one(query=query
+                                 ,filter=filter)
+              return doc
+
+        except Exception as e:
+              log_event("INFO",f"e") 
+
+    def update_doc(self):
+          pass
