@@ -1,6 +1,7 @@
 from shard.utils.logger import log_event
 from confluent_kafka import Consumer, KafkaException
-
+import json
+from typing import Any
 
 class KafkaConsumer:
     def __init__(self, topic:str, grup_id:str, bootstrap_servers:str = "localhost:9092") -> None:
@@ -21,7 +22,7 @@ class KafkaConsumer:
             raise
     
 
-    def consume_to_message(self):
+    def consume_to_message(self)-> Any:
         try:
             while True:
                 msg = self.consumer.poll(1.0)
@@ -31,8 +32,8 @@ class KafkaConsumer:
                     log_event("ERROR", f"error in msg {msg.error()}")
                     continue
 
-                key = msg.key().decode('utf-8') if msg.key() else None # type: ignore
-                value = msg.value().decode('utf-8') if msg.value() else None # type: ignore
+                key = json.loads(msg.key().decode('utf-8')) if msg.key() else None # type: ignore
+                value = json.loads(msg.value().decode('utf-8')) if msg.value() else None # type: ignore
                 
 
                 return key,value
