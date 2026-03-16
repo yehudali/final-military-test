@@ -27,19 +27,14 @@ services:
     volumes:
       - kafka_kraft:/var/lib/kafka/data
 
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
-      interval: 30s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
+    
   elasticsearch:
     container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "xpack.security.enabled: false"
+      - "xpack.security.enabled=false"
     ports:
       - 9200:9200
 
@@ -47,29 +42,54 @@ services:
       - elasticsearch-data:/usr/share/elasticsearch/datafile
 
     healthcheck:
-      test: ["CMD", "CURL", "-f", "http://localhost:9200/_cluster/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
 
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 15s
   
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.19.9
-    container_name: kibana
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.17.0
+  #   container_name: kibana
+  #   ports:
+  #     - 5601:5601
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #   depends_on:
+  #     - elasticsearch
+  mongo:
+    container_name: mongo
+    image: mongo:latest
     ports:
-      - 5601:5601
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+        
+        
+  service_a:
+    container_name: service_a
+    build:
+      context: .
+      dockerfile: /service_a/Dockerfile
     environment:
-      - ELASTICSEARCH_HOSTS=http://localhost:9200  # http://elasticsearch:9200
+      - name=value
     depends_on:
-      - elasticsearch
-        
-        
-        
+      - kafka
+      - mongo
+
 
 volumes:
   kafka_kraft:
   elasticsearch-data:
+  mongo_data:
 
       
   
