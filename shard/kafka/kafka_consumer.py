@@ -1,4 +1,4 @@
-from shard.utils.logger import *
+from shard.utils.logger import log_event
 from confluent_kafka import Consumer, KafkaException
 
 

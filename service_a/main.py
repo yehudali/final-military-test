@@ -1,12 +1,19 @@
-from shard.kafka import kafka_consumer
+from shard.config import ServiseAConfig
+from shard.kafka.kafka_consumer import KafkaConsumer
+from shard.database.mongodb_connection import MongoManager
 
 
-
-
-
+from service_a.process_manager import ManagerServiceA
 
 def run():
+    config = ServiseAConfig()
+    consumer = KafkaConsumer("intel",'service_a', config.BOOTSTRAP_SERVERS)
+    db = MongoManager()
 
+
+
+    ManagerServiceA(consumer,db)
+    
 
 
 

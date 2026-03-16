@@ -1,4 +1,6 @@
-from shard.kafka import kafka_consumer
+from shard.kafka.kafka_consumer import KafkaConsumer
+from shard.database.mongodb_connection import MongoManager
 
-def service_process_a():
-    pass
+class ManagerServiceA:
+    def __init__(self, consumer:KafkaConsumer, database:MongoManager) -> None:
+        pass
