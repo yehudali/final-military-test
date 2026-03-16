@@ -20,6 +20,8 @@ Note: If Elasticsearch is unreachable, the log will fallback to the console (Loc
 from elasticsearch import Elasticsearch
 from datetime import datetime
 
+
+
 # Initialize Elasticsearch client
 # Ensure the host 'localhost' matches your docker-compose configuration
 es = Elasticsearch(['http://localhost:9200'])
